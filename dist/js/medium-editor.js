@@ -1080,10 +1080,6 @@ MediumEditor.extensions = {};
         },
 
         cleanListDOM: function (ownerDocument, element) {
-            if (element.nodeName.toLowerCase() !== 'li') {
-                return;
-            }
-
             var list = element.parentElement;
 
             if (list.parentElement.nodeName.toLowerCase() === 'p') { // yes we need to clean up
@@ -1092,6 +1088,30 @@ MediumEditor.extensions = {};
                 // move cursor at the end of the text inside the list
                 // for some unknown reason, the cursor is moved to end of the "visual" line
                 MediumEditor.selection.moveCursor(ownerDocument, element.firstChild, element.firstChild.textContent.length);
+            }
+        },
+
+        cleanAndWrapSelectedTextNodeToParagraph: function (ownerDocument) {
+            var selection = ownerDocument.getSelection(),
+                node = selection.anchorNode;
+
+            if (node && node.nodeType === 3) {
+                var nextElement = node.nextElementSibling,
+                    p = ownerDocument.createElement('p'),
+                    context = this;
+
+                if (
+                    nextElement &&
+                    nextElement.tagName &&
+                    nextElement.tagName.toLowerCase() === 'br' &&
+                    nextElement.parentNode
+                ) {
+                    nextElement.parentNode.removeChild(nextElement);
+                }
+
+                setTimeout(function () {
+                    context.moveTextRangeIntoElement(node, node, p);
+                }, 0);
             }
         },
 
@@ -2502,7 +2522,7 @@ MediumEditor.extensions = {};
                 win = this.base.options.contentWindow,
                 doc = this.base.options.ownerDocument;
 
-            if (targets !== null) {
+            if (targets) {
                 targets = MediumEditor.util.isElement(targets) || [win, doc].indexOf(targets) > -1 ? [targets] : targets;
 
                 Array.prototype.forEach.call(targets, function (target) {
@@ -6935,7 +6955,7 @@ MediumEditor.extensions = {};
         for (var i = 0, n = atts.length; i < n; i++) {
             // do not re-create existing attributes
             if (!div.hasAttribute(atts[i].nodeName)) {
-                div.setAttribute(atts[i].nodeName, atts[i].nodeValue);
+                div.setAttribute(atts[i].nodeName, atts[i].value);
             }
         }
 
@@ -7175,8 +7195,40 @@ MediumEditor.extensions = {};
             return result;
         }
 
+        if (action === 'insertunorderedlist' || action === 'insertorderedlist') {
+            setSelectedContentEditable(this, false);
+        }
+
         cmdValueArgument = opts && opts.value;
-        return this.options.ownerDocument.execCommand(action, false, cmdValueArgument);
+
+        var returnedValue = this.options.ownerDocument.execCommand(action, false, cmdValueArgument);
+
+        if (action === 'insertunorderedlist' || action === 'insertorderedlist') {
+            setSelectedContentEditable(this, true);
+        }
+
+        return returnedValue;
+    }
+
+    function setSelectedContentEditable(scope, value) {
+        if (setSelectedContentEditable.elements && setSelectedContentEditable.elements.length) {
+            setSelectedContentEditable.elements.forEach(function (element) {
+                element.setAttribute('contenteditable', true);
+            });
+        } else if (!value) {
+            var selection = scope.options.contentWindow.getSelection(),
+                range = selection.getRangeAt(0),
+                container = range.commonAncestorContainer;
+
+            if (container.querySelectorAll) {
+                var elements = container.querySelectorAll('[contenteditable=true]');
+                setSelectedContentEditable.elements = [].slice.call(elements);
+
+                setSelectedContentEditable.elements.forEach(function (element) {
+                    element.setAttribute('contenteditable', false);
+                });
+            }
+        }
     }
 
     /* If we've just justified text within a container block
@@ -7493,7 +7545,15 @@ MediumEditor.extensions = {};
 
             // do some DOM clean-up for known browser issues after the action
             if (action === 'insertunorderedlist' || action === 'insertorderedlist') {
-                MediumEditor.util.cleanListDOM(this.options.ownerDocument, this.getSelectedParentElement());
+                var element = this.getSelectedParentElement();
+
+                if (element.nodeName.toLowerCase() === 'li') {
+                    MediumEditor.util.cleanListDOM(this.options.ownerDocument, element);
+                } else {
+                    this.saveSelection();
+                    MediumEditor.util.cleanAndWrapSelectedTextNodeToParagraph(this.options.ownerDocument);
+                    setTimeout(this.restoreSelection.bind(this), 0);
+                }
             }
 
             this.checkSelection();
