@@ -1,6 +1,6 @@
 {
-  "name": "medium-editor",
-  "version": "5.23.2",
+  "name": "snphq-medium-editor",
+  "version": "1.0.0",
   "author": "Davi Ferreira <hi@daviferreira.com>",
   "contributors": [
     {
@@ -20,11 +20,11 @@
   "main": "dist/js/medium-editor.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yabwe/medium-editor"
+    "url": "https://github.com/snphq/medium-editor"
   },
   "bugs": {
-    "url": "https://github.com/yabwe/medium-editor/issues",
-    "email": "hi@daviferreira.com"
+    "url": "https://github.com/snphq/medium-editor/issues",
+    "email": "hello@snp.agency"
   },
   "homepage": "http://yabwe.github.io/medium-editor/",
   "keywords": [
