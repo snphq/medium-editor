@@ -168,7 +168,7 @@ module.exports = function (grunt) {
         },
         build: {
             src: 'dist/js/medium-editor.js',
-            dest: 'dist/js/<%= pkg.name %>.min.js'
+            dest: 'dist/js/medium-editor.min.js'
         }
     };
 
@@ -274,7 +274,7 @@ module.exports = function (grunt) {
                 .concat(['src/wrappers/start.js'])
                 .concat(srcFiles)
                 .concat(['src/wrappers/end.js']),
-            dest: 'dist/js/<%= pkg.name %>.js',
+            dest: 'dist/js/medium-editor.js',
             nonull: true
         }
     };
