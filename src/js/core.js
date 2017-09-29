@@ -621,8 +621,40 @@
             return result;
         }
 
+        if (action === 'insertunorderedlist' || action === 'insertorderedlist') {
+            setSelectedContentEditable(this, false);
+        }
+
         cmdValueArgument = opts && opts.value;
-        return this.options.ownerDocument.execCommand(action, false, cmdValueArgument);
+
+        var returnedValue = this.options.ownerDocument.execCommand(action, false, cmdValueArgument);
+
+        if (action === 'insertunorderedlist' || action === 'insertorderedlist') {
+            setSelectedContentEditable(this, true);
+        }
+
+        return returnedValue;
+    }
+
+    function setSelectedContentEditable(scope, value) {
+        if (setSelectedContentEditable.elements && setSelectedContentEditable.elements.length) {
+            setSelectedContentEditable.elements.forEach(function (element) {
+                element.setAttribute('contenteditable', true);
+            });
+        } else if (!value) {
+            var selection = scope.options.contentWindow.getSelection(),
+                range = selection.getRangeAt(0),
+                container = range.commonAncestorContainer;
+
+            if (container.querySelectorAll) {
+                var elements = container.querySelectorAll('[contenteditable=true]');
+                setSelectedContentEditable.elements = [].slice.call(elements);
+
+                setSelectedContentEditable.elements.forEach(function (element) {
+                    element.setAttribute('contenteditable', false);
+                });
+            }
+        }
     }
 
     /* If we've just justified text within a container block
