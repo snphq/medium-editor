@@ -143,7 +143,15 @@
                 }
                 anchor.setAttribute('target', target);
             }
+            if (!Util.isURL(href)) {
+                anchor.className += ' medium_editor_invalid_link';
+            }
             return anchor;
+        },
+
+        isURL: function (str) {
+            var regex = new RegExp(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi);
+            return str.match(regex);
         },
 
         /*
