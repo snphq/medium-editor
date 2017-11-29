@@ -144,7 +144,9 @@
                 anchor.setAttribute('target', target);
             }
             if (!Util.isURL(href)) {
-                anchor.className += ' medium_editor_invalid_link';
+                anchor.classList.add('medium_editor_invalid_link');
+            } else if (anchor.classList.contains('medium-editor-invalid-link')) {
+                anchor.classList.remove('medium-editor-invalid-link');
             }
             return anchor;
         },

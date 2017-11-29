@@ -549,7 +549,17 @@ MediumEditor.extensions = {};
                 }
                 anchor.setAttribute('target', target);
             }
+            if (!Util.isURL(href)) {
+                anchor.classList.add('medium_editor_invalid_link');
+            } else if (anchor.classList.contains('medium-editor-invalid-link')) {
+                anchor.classList.remove('medium-editor-invalid-link');
+            }
             return anchor;
+        },
+
+        isURL: function (str) {
+            var regex = new RegExp(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi);
+            return str.match(regex);
         },
 
         /*
@@ -7762,7 +7772,16 @@ MediumEditor.extensions = {};
 
                             this.importSelection(exportedSelection);
                         } else {
-                            this.options.ownerDocument.execCommand('createLink', false, targetUrl);
+                            if (this.options.onlyValidLink) {
+                                var selected = window.getSelection().toString();
+                                if (MediumEditor.util.isURL(targetUrl)) {
+                                    this.options.ownerDocument.execCommand('insertHTML', false, '<a href=' + targetUrl + '>' + selected + '</a>');
+                                } else {
+                                    this.options.ownerDocument.execCommand('insertHTML', false, '<span class=medium_editor_invalid_link>' + selected + '</span>');
+                                }
+                            } else {
+                                this.options.ownerDocument.execCommand('createLink', false, targetUrl);
+                            }
                         }
 
                         if (this.options.targetBlank || opts.target === '_blank') {
