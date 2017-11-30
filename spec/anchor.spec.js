@@ -98,13 +98,13 @@ describe('Anchor Button TestCase', function () {
             button = toolbar.getToolbarElement().querySelector('[data-action="createLink"]');
             fireEvent(button, 'click');
             input = editor.getExtensionByName('anchor').getInput();
-            input.value = '    test   ';
+            input.value = '    https://www.google.ru   ';
             fireEvent(input, 'keyup', {
                 keyCode: MediumEditor.util.keyCode.ENTER
             });
             expect(editor.createLink).toHaveBeenCalled();
             // A trailing <br> may be added when insertHTML is used to add the link internally.
-            expect(this.el.innerHTML.indexOf('<a href="test">lorem ipsum</a>')).toBe(0);
+            expect(this.el.innerHTML.indexOf('<a href="https://www.google.ru">lorem ipsum</a>')).toBe(0);
         });
 
         it('should not set any href if all user passes is spaces in the link when user presses enter', function () {

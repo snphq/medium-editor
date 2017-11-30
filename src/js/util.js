@@ -134,27 +134,19 @@
          * behavior will result.
          */
         createLink: function (document, textNodes, href, target) {
-            if (!Util.isURL(href)) {
-                return Util.createInvalidLink(document, textNodes);
-            } else {
-                var anchor = document.createElement('a');
-                Util.moveTextRangeIntoElement(textNodes[0], textNodes[textNodes.length - 1], anchor);
-                anchor.setAttribute('href', href);
-                if (target) {
-                    if (target === '_blank') {
-                        anchor.setAttribute('rel', 'noopener noreferrer');
-                    }
-                    anchor.setAttribute('target', target);
-                }
-
-                return anchor;
-            }
-        },
-
-        createInvalidLink: function (document, textNodes) {
-            var anchor = document.createElement('span');
+            var anchor = document.createElement('a');
             Util.moveTextRangeIntoElement(textNodes[0], textNodes[textNodes.length - 1], anchor);
-            anchor.classList.add('medium_editor_invalid_link');
+            anchor.setAttribute('href', href);
+            if (target) {
+                if (target === '_blank') {
+                    anchor.setAttribute('rel', 'noopener noreferrer');
+                }
+                anchor.setAttribute('target', target);
+            }
+            if (!Util.isURL(href)) {
+                anchor.classList.add('medium_editor_invalid_link');
+            }
+
             return anchor;
         },
 

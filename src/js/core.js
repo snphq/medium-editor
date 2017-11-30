@@ -1188,15 +1188,13 @@
 
                             this.importSelection(exportedSelection);
                         } else {
-                            if (this.options.onlyValidLink) {
-                                var selected = window.getSelection().toString();
-                                if (MediumEditor.util.isURL(targetUrl)) {
-                                    this.options.ownerDocument.execCommand('insertHTML', false, '<a href=' + targetUrl + '>' + selected + '</a>');
-                                } else {
-                                    this.options.ownerDocument.execCommand('insertHTML', false, '<span class=medium_editor_invalid_link>' + selected + '</span>');
-                                }
-                            } else {
+                            if (MediumEditor.util.isURL(targetUrl)) {
                                 this.options.ownerDocument.execCommand('createLink', false, targetUrl);
+                            } else {
+                                var selected = window.getSelection().toString();
+                                this.options.ownerDocument.execCommand(
+                                    'insertHTML', false, '<a href=' + targetUrl + ' class=medium_editor_invalid_link>' + selected + '</a>'
+                                );
                             }
                         }
 
