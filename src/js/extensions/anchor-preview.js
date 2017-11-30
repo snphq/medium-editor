@@ -209,7 +209,7 @@
         handleEditableMouseover: function (event) {
             var target = MediumEditor.util.getClosestTag(event.target, 'a');
 
-            if (false === target) {
+            if (false === target || this.getEditorOption('notPreviewForInvalidLink')) {
                 return;
             }
 
