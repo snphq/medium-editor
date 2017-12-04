@@ -143,11 +143,15 @@
                 }
                 anchor.setAttribute('target', target);
             }
-            if (!Util.isURL(href)) {
-                anchor.classList.add('medium_editor_invalid_link');
-            }
+            Util.validateLink(anchor);
 
             return anchor;
+        },
+
+        validateLink: function (link) {
+            if (!Util.isURL(link.href)) {
+                link.classList.add('medium-editor-invalid-link');
+            }
         },
 
         isURL: function (str) {

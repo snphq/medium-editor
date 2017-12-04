@@ -232,7 +232,9 @@
         },
 
         ensureEncodedUri: function (str) {
-            return str === decodeURI(str) ? encodeURI(str) : str;
+            /*global escape: true */
+            /*global unescape: true */
+            return str === decodeURI(escape(unescape((str)))) ? encodeURI(str) : str;
         },
 
         ensureEncodedUriComponent: function (str) {

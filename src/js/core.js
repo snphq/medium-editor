@@ -1193,7 +1193,7 @@
                             } else {
                                 var selected = window.getSelection().toString();
                                 this.options.ownerDocument.execCommand(
-                                    'insertHTML', false, '<a href=' + targetUrl + ' class=medium_editor_invalid_link>' + selected + '</a>'
+                                    'insertHTML', false, '<a href=' + targetUrl + ' class=medium-editor-invalid-link>' + selected + '</a>'
                                 );
                             }
                         }

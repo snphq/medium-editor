@@ -207,10 +207,9 @@
         },
 
         handleEditableMouseover: function (event) {
-            var target = MediumEditor.util.getClosestTag(event.target, 'a'),
-                isInvalid = target.classList.contains('medium_editor_invalid_link');
+            var target = MediumEditor.util.getClosestTag(event.target, 'a');
 
-            if (false === target || (isInvalid && this.getEditorOption('notPreviewForInvalidLink'))) {
+            if (false === target) {
                 return;
             }
 
