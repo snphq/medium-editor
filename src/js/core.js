@@ -1188,7 +1188,14 @@
 
                             this.importSelection(exportedSelection);
                         } else {
-                            this.options.ownerDocument.execCommand('createLink', false, targetUrl);
+                            if (MediumEditor.util.isURL(targetUrl)) {
+                                this.options.ownerDocument.execCommand('createLink', false, targetUrl);
+                            } else {
+                                var selected = window.getSelection().toString();
+                                this.options.ownerDocument.execCommand(
+                                    'insertHTML', false, '<a href=' + targetUrl + ' class=medium-editor-invalid-link>' + selected + '</a>'
+                                );
+                            }
                         }
 
                         if (this.options.targetBlank || opts.target === '_blank') {

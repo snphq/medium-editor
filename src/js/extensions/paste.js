@@ -449,6 +449,7 @@
                 workEl = elList[i];
 
                 if ('a' === workEl.nodeName.toLowerCase() && this.getEditorOption('targetBlank')) {
+                    MediumEditor.util.validateLink(workEl);
                     MediumEditor.util.setTargetBlank(workEl);
                 }
 

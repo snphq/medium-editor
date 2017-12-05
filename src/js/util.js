@@ -143,7 +143,20 @@
                 }
                 anchor.setAttribute('target', target);
             }
+            Util.validateLink(anchor);
+
             return anchor;
+        },
+
+        validateLink: function (link) {
+            if (!Util.isURL(link.href)) {
+                link.classList.add('medium-editor-invalid-link');
+            }
+        },
+
+        isURL: function (str) {
+            var regex = new RegExp(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi);
+            return str.match(regex);
         },
 
         /*
