@@ -549,7 +549,20 @@ MediumEditor.extensions = {};
                 }
                 anchor.setAttribute('target', target);
             }
+            Util.validateLink(anchor);
+
             return anchor;
+        },
+
+        validateLink: function (link) {
+            if (!Util.isURL(link.href)) {
+                link.classList.add('medium-editor-invalid-link');
+            }
+        },
+
+        isURL: function (str) {
+            var regex = new RegExp(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi);
+            return str.match(regex);
         },
 
         /*
@@ -3913,7 +3926,9 @@ MediumEditor.extensions = {};
         },
 
         ensureEncodedUri: function (str) {
-            return str === decodeURI(str) ? encodeURI(str) : str;
+            /*global escape: true */
+            /*global unescape: true */
+            return str === decodeURI(escape(unescape((str)))) ? encodeURI(str) : str;
         },
 
         ensureEncodedUriComponent: function (str) {
@@ -5609,6 +5624,7 @@ MediumEditor.extensions = {};
                 workEl = elList[i];
 
                 if ('a' === workEl.nodeName.toLowerCase() && this.getEditorOption('targetBlank')) {
+                    MediumEditor.util.validateLink(workEl);
                     MediumEditor.util.setTargetBlank(workEl);
                 }
 
@@ -7762,7 +7778,14 @@ MediumEditor.extensions = {};
 
                             this.importSelection(exportedSelection);
                         } else {
-                            this.options.ownerDocument.execCommand('createLink', false, targetUrl);
+                            if (MediumEditor.util.isURL(targetUrl)) {
+                                this.options.ownerDocument.execCommand('createLink', false, targetUrl);
+                            } else {
+                                var selected = window.getSelection().toString();
+                                this.options.ownerDocument.execCommand(
+                                    'insertHTML', false, '<a href=' + targetUrl + ' class=medium-editor-invalid-link>' + selected + '</a>'
+                                );
+                            }
                         }
 
                         if (this.options.targetBlank || opts.target === '_blank') {
